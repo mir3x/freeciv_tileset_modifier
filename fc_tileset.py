@@ -9,12 +9,30 @@
 import os
 import errno
 import sys
+from PIL import Image
 from argparse import ArgumentParser
 
 def load_dir(dir_name):
-    pass
+    load_spec("XXX")
 
 def load_spec(filename):
+    try:
+        with open("trident/tiles.spec", "r") as reader:
+            all = reader.readlines()
+            while True:
+
+                if (len(all)) == 0:
+                    break
+                line = all.pop(0)
+        reader.close()
+
+    except:
+        err = sys.exc_info()[0]
+        print(f"Error ***{err}*** when reading file {filename}. Exiting")
+        exit(1)
+
+def load_image(filename):
+    im = Image.open("trident/tiles.png")
     pass
 
 def save_spec(filename):
@@ -24,7 +42,7 @@ def load_img(filename):
     pass
 
 def main(input_dir, output_dir):
-    pass
+    load_dir(input_dir)
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Freeciv Tileset Modifier')
