@@ -40,9 +40,7 @@ def load_dir(dir_name):
             tiles_list = list()
             load_spec(dir_name + os.path.sep + file)
 
-# global sizes get overwritten depending on section
-
-
+# writes to global sizes, get overwritten depending on section
 def extract_size(line):
     global sizes
     if ('=' not in line):
@@ -170,7 +168,7 @@ def load_image(filename, output_dir):
     im_mod = Image.new("RGBA", imsize, "black")
 
     for tile in tiles_list:
-        # Did u see this this coming ?
+        # Could u see this this coming ?
         box = (tile[X] + tile[DX] * tile[SY] + tile[PB] * tile[SY],
                tile[Y] + tile[DY] * tile[SX] + tile[PB] * tile[SX],
                tile[X] + tile[DX] * tile[SY] + tile[DX] + tile[PB] * tile[SY],
