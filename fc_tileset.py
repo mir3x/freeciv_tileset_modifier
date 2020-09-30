@@ -171,10 +171,10 @@ def load_image(filename, output_dir):
 
     for tile in tiles_list:
         # Did u see this this coming ?
-        box = (tile[Y] + tile[DX] * tile[SY] + tile[PB] * tile[SY],
-               tile[X] + tile[DY] * tile[SX] + tile[PB] * tile[SX],
-               tile[Y] + tile[DX] * tile[SY] + tile[DX] + tile[PB] * tile[SY],
-               tile[X] + tile[DY] * tile[SX] + tile[DY] + tile[PB] * tile[SX])
+        box = (tile[X] + tile[DX] * tile[SY] + tile[PB] * tile[SY],
+               tile[Y] + tile[DY] * tile[SX] + tile[PB] * tile[SX],
+               tile[X] + tile[DX] * tile[SY] + tile[DX] + tile[PB] * tile[SY],
+               tile[Y] + tile[DY] * tile[SX] + tile[DY] + tile[PB] * tile[SX])
 
         region = im.crop(box)
         im_mod.paste(region, box)
