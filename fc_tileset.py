@@ -7,16 +7,12 @@
 ##=##=##=##=##=##=##=##=##=##=##=##=##=##=##=##=##=##=##=##=##
 
 import os
-import errno
-import sys
-from PIL import Image
-from argparse import ArgumentParser
-import os
 import shutil
-from tempfile import mkstemp
-from shutil import move
+from argparse import ArgumentParser
 from os import fdopen, remove
-
+from shutil import move
+from tempfile import mkstemp
+from PIL import Image
 
 X = 0
 Y = 1
@@ -30,6 +26,7 @@ TNAME = 7
 tiles_list = list()
 sizes = [0, 0, 0, 0, 0]  # x,y,dx, dy, pb
 scale = 100
+is_overhead = False
 
 def remove_comments(line):
     if line[0] == ";":
@@ -189,6 +186,7 @@ def load_image(filename, output_dir):
 
         region = im.crop(box)
         new_region = region.resize((sc_v(region.size[0]), sc_v(region.size[1])), Image.BOX)
+        # scaling
         tile[X] = sc_v(tile[X])
         tile[Y] = sc_v(tile[Y])
         tile[DY] = sc_v(tile[DY])
@@ -242,6 +240,7 @@ def replace_line_grid_scale(line):
 
 def write_tilespec(filew, inputr):
     global scale
+    global is_overhead
     output_specfile = filew + ".tilespec"
     inr = inputr + ".tilespec"
     fh, abs_path = mkstemp()
@@ -261,6 +260,10 @@ def write_tilespec(filew, inputr):
                     newline = line[:a1] + "\"" + filew + line[a2:]
                     new_file.write(newline)
                     continue
+
+                if "type" in line and "overhead" in line and "=" in line:
+                    is_overhead = True;
+
 
                 if (scale != 100):
                     newline = replace_line_with_scale(line)
@@ -336,7 +339,6 @@ def main(input_file, output_file, scalpel):
     # load_tileset(input_file)
     global scale
     scale = scalpel
-
 
     write_tileset(input_file, output_file)
 
