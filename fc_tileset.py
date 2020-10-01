@@ -337,6 +337,7 @@ def main(input_file, output_file, scalpel):
     global scale
     scale = scalpel
 
+
     write_tileset(input_file, output_file)
 
 
