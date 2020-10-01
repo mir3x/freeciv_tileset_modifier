@@ -29,7 +29,7 @@ TNAME = 7
 
 tiles_list = list()
 sizes = [0, 0, 0, 0, 0]  # x,y,dx, dy, pb
-
+scale = 100
 
 def load_dir(dir_name):
     global tiles_list
@@ -130,7 +130,6 @@ def load_spec(filename, output_dir):
                 f = extract_filename(line)
                 if (f):
                     filename = f
-                    print("FILENAME:", f)
 
             # tiles is non existent section that should exist
             # if tiles are not row, column, tag then gg
@@ -178,7 +177,7 @@ def load_image(filename, output_dir):
         im_mod.paste(region, box)
 
     bad_deadpool, good_deadpool = os.path.split(filename)
-    print(f"Writing:{good_deadpool} to {output_dir}" )
+    print(f"Writing:{output_dir}{os.path.sep}{good_deadpool}")
     im_mod.save(output_dir + os.path.sep + good_deadpool)
 
 
@@ -211,6 +210,7 @@ def write_tilespec(filew, inputr):
         remove(output_specfile)
     # Move new file
     move(abs_path, output_specfile)
+    print(f"Writing:{output_specfile}")
 
 
 def write_directory(output_file, input):
@@ -247,6 +247,7 @@ def write_directory(output_file, input):
                 remove(output_specfile)
             # Move new file
             move(abs_path, output_specfile)
+            print(f"Writing:{output_specfile}")
 
 
 def write_tileset(input_file, output_file):
@@ -255,8 +256,10 @@ def write_tileset(input_file, output_file):
     write_directory(output_file, miststuck)
 
 
-def main(input_file, output_file):
+def main(input_file, output_file, scalpel):
     # load_tileset(input_file)
+    global scale
+    scale = scalpel
     write_tileset(input_file, output_file)
 
 
@@ -267,5 +270,7 @@ if __name__ == '__main__':
     parser.add_argument('-output_file', type=str, metavar='string', nargs='?', default="XXX",
                         help='New tileset name (default: ($output_file), "\
                              "directory with that name will be wiped, you have been warned')
+    parser.add_argument('-scale', type=int, metavar='scale percent', nargs='?', default="200",
+                        help='New scale in percent (default: ($scale %) ')
     args = parser.parse_args()
-    main(args.input_tilespec, args.output_file)
+    main(args.input_tilespec, args.output_file, args.scale)
