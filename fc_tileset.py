@@ -101,12 +101,12 @@ def load_spec(filename, output_dir):
 
     # try: or dont even try
     with open(filename, "r") as reader:
-        all = reader.readlines()
+        speciman_file = reader.readlines()
 
         while True:
-            if (len(all)) == 0:
+            if not speciman_file:
                 break
-            line = all.pop(0)
+            line = speciman_file.pop(0)
             line = line.strip()
 
             if not line:
@@ -144,6 +144,7 @@ def load_spec(filename, output_dir):
                     where = "[tiles]"
 
             if (where == "[in_the_hell]"):
+                # if you are here you are doomed
                 continue
 
             lineNumber += 1
