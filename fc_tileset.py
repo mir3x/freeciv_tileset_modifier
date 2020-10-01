@@ -185,7 +185,7 @@ def load_image(filename, output_dir):
                tile[Y] + tile[DY] * tile[SX] + tile[DY] + tile[PB] * tile[SX])
 
         region = im.crop(box)
-        new_region = region.resize((sc_v(region.size[0]), sc_v(region.size[1])), Image.BILINEAR)
+        new_region = region.resize((sc_v(region.size[0]), sc_v(region.size[1])), Image.BOX)
         tile[X] = sc_v(tile[X])
         tile[Y] = sc_v(tile[Y])
         tile[DY] = sc_v(tile[DY])
