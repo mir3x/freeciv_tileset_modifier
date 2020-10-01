@@ -32,6 +32,9 @@ sizes = [0, 0, 0, 0, 0]  # x,y,dx, dy, pb
 scale = 100
 
 def remove_comments(line):
+    if line[0] == ";":
+        return line
+
     if ";" in line:
         x = line.find(";")
         line = line[0:x] + "\n"
@@ -249,8 +252,10 @@ def write_tilespec(filew, inputr):
                     shock = "name = \"" + filew + "\"\n"
                     new_file.write(shock)
                     continue
+
                 if inputr in line and ".spec" in line:
                     # it will work!!! (maybe)
+
                     a1 = line.find("\"")
                     a2 = line.rfind("/")
                     newline = line[:a1] + "\"" + filew + line[a2:]
@@ -331,7 +336,9 @@ def main(input_file, output_file, scalpel):
     # load_tileset(input_file)
     global scale
     scale = scalpel
+
     write_tileset(input_file, output_file)
+
 
 
 if __name__ == '__main__':
