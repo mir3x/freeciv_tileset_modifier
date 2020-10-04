@@ -8,10 +8,13 @@
 
 import os
 import shutil
+import sys
+import traceback
 from argparse import ArgumentParser
 from os import fdopen, remove
 from shutil import move
 from tempfile import mkstemp
+
 from PIL import Image
 
 X = 0
@@ -105,57 +108,63 @@ def load_spec(filename, output_dir):
 
     sizes = [0, 0, 0, 0, 0]  # x,y,dx, dy, pb
 
-    # try: or dont even try
-    with open(filename, "r") as reader:
-        speciman_file = reader.readlines()
+    try:
+        with open(filename, "r") as reader:
+            speciman_file = reader.readlines()
 
-        while True:
-            if not speciman_file:
-                break
-            line = speciman_file.pop(0)
-            line = line.strip()
+            while True:
+                if not speciman_file:
+                    break
+                line = speciman_file.pop(0)
+                line = line.strip()
 
-            if not line:
-                continue
+                if not line:
+                    continue
 
-            if line[0] == ";" or line[0] == "}":
-                continue
+                if line[0] == ";" or line[0] == "}":
+                    continue
 
-            # remove comments
-            if ";" in line:
-                x = line.find(";")
-                line = line[0:x]
+                # remove comments
+                if ";" in line:
+                    x = line.find(";")
+                    line = line[0:x]
 
-            if (line[0] == "["):
-                where = line
-                if ("grid" in where):
-                    where = "[grid]"
-                continue
+                if (line[0] == "["):
+                    where = line
+                    if ("grid" in where):
+                        where = "[grid]"
+                    continue
 
-            if (where == "[file]"):
-                f = extract_filename(line)
-                if (f):
-                    filename = f
+                if (where == "[file]"):
+                    f = extract_filename(line)
+                    if (f):
+                        filename = f
 
-            # tiles is non existent section that should exist
-            # if tiles are not row, column, tag then gg
-            if (where == "[tiles]"):
-                f = extract_tiles(line)
-                continue
+                # tiles is non existent section that should exist
+                # if tiles are not row, column, tag then gg
+                if (where == "[tiles]"):
+                    f = extract_tiles(line)
+                    continue
 
-            if (where == "[grid]"):
-                x = extract_size(line)
-                # gate to invisible section
-                if x:
-                    where = "[tiles]"
+                if (where == "[grid]"):
+                    x = extract_size(line)
+                    # gate to invisible section
+                    if x:
+                        where = "[tiles]"
 
-            if (where == "[in_the_hell]"):
-                # if you are here you are doomed
-                continue
+                if (where == "[in_the_hell]"):
+                    # if you are here you are doomed
+                    continue
 
-            lineNumber += 1
+                lineNumber += 1
 
-    reader.close()
+        reader.close()
+    except:
+        err = sys.exc_info()[0]
+        print(f"\033[91mError ***{err}*** when reading file {self.filename}. Exiting\033[0m")
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+        exit(1)
     load_image(filename, output_dir)
 
     # except:
