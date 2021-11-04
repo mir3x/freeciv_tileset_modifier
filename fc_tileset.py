@@ -32,12 +32,9 @@ scale = 100
 is_overhead = False
 
 def remove_comments(line):
-    if line[0] == ";":
-        return line
-
-    if ";" in line:
+    if (";" in line):
         x = line.find(";")
-        line = line[0:x] + "\n"
+        line = line[0:x]
     return line
 
 def load_dir(dir_name):
