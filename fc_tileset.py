@@ -26,7 +26,7 @@ SX = 5
 SY = 6
 TNAME = 7
 
-tiles_list = list()
+tiles_list = []
 sizes = [0, 0, 0, 0, 0]  # x,y,dx, dy, pb
 scale = 100
 is_overhead = False
@@ -34,7 +34,7 @@ is_overhead = False
 def remove_comments(line):
     if (";" in line):
         x = line.find(";")
-        line = line[0:x]
+        line = line[:x]
     return line
 
 def load_dir(dir_name):
@@ -43,7 +43,7 @@ def load_dir(dir_name):
     for file in os.listdir(dir_name):
         if file.endswith(".spec"):
             print("Loading", file)
-            tiles_list = list()
+            tiles_list = []
             load_spec(dir_name + os.path.sep + file)
 
 # writes to global sizes, get overwritten depending on section
@@ -90,7 +90,7 @@ def extract_tiles(line):
     s = sizes.copy()
     s.extend(tile_list)
 
-    ds = list(map(int, s[0:TNAME]))
+    ds = list(map(int, s[:TNAME]))
     ds.append(s[TNAME].strip())
 
     tiles_list.append(ds)
@@ -109,22 +109,20 @@ def load_spec(filename, output_dir):
         with open(filename, "r") as reader:
             speciman_file = reader.readlines()
 
-            while True:
-                if not speciman_file:
-                    break
+            while speciman_file:
                 line = speciman_file.pop(0)
                 line = line.strip()
 
                 if not line:
                     continue
 
-                if line[0] == ";" or line[0] == "}":
+                if line[0] in [";", "}"]:
                     continue
 
                 # remove comments
                 if ";" in line:
                     x = line.find(";")
-                    line = line[0:x]
+                    line = line[:x]
 
                 if (line[0] == "["):
                     where = line
@@ -133,8 +131,7 @@ def load_spec(filename, output_dir):
                     continue
 
                 if (where == "[file]"):
-                    f = extract_filename(line)
-                    if (f):
+                    if f := extract_filename(line):
                         filename = f
 
                 # tiles is non existent section that should exist
@@ -144,9 +141,7 @@ def load_spec(filename, output_dir):
                     continue
 
                 if (where == "[grid]"):
-                    x = extract_size(line)
-                    # gate to invisible section
-                    if x:
+                    if x := extract_size(line):
                         where = "[tiles]"
 
                 if (where == "[in_the_hell]"):
@@ -247,8 +242,8 @@ def replace_line_grid_scale(line):
 def write_tilespec(filew, inputr):
     global scale
     global is_overhead
-    output_specfile = filew + ".tilespec"
-    inr = inputr + ".tilespec"
+    output_specfile = f"{filew}.tilespec"
+    inr = f"{inputr}.tilespec"
     fh, abs_path = mkstemp()
     with fdopen(fh, 'w') as new_file:
         with open(inr) as old_file:
@@ -296,7 +291,7 @@ def write_directory(output_file, input):
     for filex in os.listdir(input):
         if filex.endswith(".spec"):
             print("Loading", filex)
-            tiles_list = list()
+            tiles_list = []
             load_spec(input + os.path.sep + filex, output_file)
             output_specfile = output_file + os.path.sep + filex
 
@@ -313,11 +308,7 @@ def write_directory(output_file, input):
                             new_file.write(newline)
                             continue
                         if line[0] == "[":
-                            if "[grid_" in line:
-                                where = "grid"
-                            else:
-                                where = "notgrid"
-
+                            where = "grid" if "[grid_" in line else "notgrid"
                         if where == "grid" and scale !=100:
                             newline = replace_line_grid_scale(line)
                             new_file.write(newline)
